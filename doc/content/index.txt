@@ -1,4 +1,4 @@
-Localization_MRPTName - English
+﻿Localization_MRPTName - English
 ========================
 
 .. toctree::
@@ -128,6 +128,37 @@ pfAuxFilterOptimal_MaximumSearchSamples int                10
 BETA             double             0.5              
 sampleSize       int                1                
 poseTimeOut      float              3.0              
+PF_algorithm     string             pfSatndardProposal 
+resampleingMethod int                prMultinomials   
+particles_count  int                1000             
+occupancyGrid_count int                1                
+mapAltitude      int                0                
+useMapaltitude   int                1                
+maxDistanceInsertion int                15               
+maxOccupancyUpdateCertainty double             0.55             
+consiiderInvalidRangesAsFreeSpace int                1                
+decimation       int                1                
+hrizontalTolerance double             0.000873         
+CFD_features_gaussian_size double             1.0              
+CFD_features_median_size double             3.0              
+wideningBeamsWithDistance int                0                
+likelihoodMethod int                4                
+enableLikelihoodCache int                1                
+LF_decimation    int                20               
+LF_stdHit        double             20               
+LF_maxCorrsDistance double             0.30             
+LF_zHit          double             0.95             
+LF_zRandom       double             0.05             
+LF_maxRange      double             80               
+LF_alternateAverageMethod int                0                
+MI_exponent      int                10               
+MI_skip_rasys    int                10               
+MI_ratio_max_distance int                2                
+rayTracing_useDistanceFilter int                0                
+rayTracing_decimation int                10               
+rayTracing_stdHit double             0.30             
+consensus_takeEachRange int                30               
+consensus_pow    int                1                
 ================ ================== ================ ======
 
 Ports

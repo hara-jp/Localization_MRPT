@@ -1,21 +1,20 @@
 ﻿// -*- C++ -*-
 /*!
- * @file  Localization_MRPT.cpp
+ * @file  Localization_MRPTTest.cpp
  * @brief Localization MRPT Component
  * @date $Date$
  *
  * $Id$
  */
 
-#include "Localization_MRPT.h"
-#include "MonteCarloLocalization.h"
+#include "Localization_MRPTTest.h"
 
 // Module specification
 // <rtc-template block="module_spec">
 static const char* localization_mrpt_spec[] =
   {
-    "implementation_id", "Localization_MRPT",
-    "type_name",         "Localization_MRPT",
+    "implementation_id", "Localization_MRPTTest",
+    "type_name",         "Localization_MRPTTest",
     "description",       "Localization MRPT Component",
     "version",           "1.0.0",
     "vendor",            "Sugar Sweet Robotics",
@@ -49,16 +48,16 @@ static const char* localization_mrpt_spec[] =
     "conf.default.sampleSize", "1",
     "conf.default.poseTimeOut", "3.0",
     "conf.default.PF_algorithm", "pfSatndardProposal",
-    "conf.default.resamplingMethod", "prMultinomials",
+    "conf.default.resampleingMethod", "prMultinomials",
     "conf.default.particles_count", "1000",
     "conf.default.occupancyGrid_count", "1",
     "conf.default.mapAltitude", "0",
-    "conf.default.useMapAltitude", "1",
+    "conf.default.useMapaltitude", "1",
     "conf.default.maxDistanceInsertion", "15",
     "conf.default.maxOccupancyUpdateCertainty", "0.55",
-    "conf.default.considerInvalidRangesAsFreeSpace", "1",
+    "conf.default.consiiderInvalidRangesAsFreeSpace", "1",
     "conf.default.decimation", "1",
-    "conf.default.horizontalTolerance", "0.000873",
+    "conf.default.hrizontalTolerance", "0.000873",
     "conf.default.CFD_features_gaussian_size", "1.0",
     "conf.default.CFD_features_median_size", "3.0",
     "conf.default.wideningBeamsWithDistance", "0",
@@ -72,7 +71,7 @@ static const char* localization_mrpt_spec[] =
     "conf.default.LF_maxRange", "80",
     "conf.default.LF_alternateAverageMethod", "0",
     "conf.default.MI_exponent", "10",
-    "conf.default.MI_skip_rays", "10",
+    "conf.default.MI_skip_rasys", "10",
     "conf.default.MI_ratio_max_distance", "2",
     "conf.default.rayTracing_useDistanceFilter", "0",
     "conf.default.rayTracing_decimation", "10",
@@ -104,16 +103,16 @@ static const char* localization_mrpt_spec[] =
     "conf.__widget__.sampleSize", "text",
     "conf.__widget__.poseTimeOut", "text",
     "conf.__widget__.PF_algorithm", "text",
-    "conf.__widget__.resamplingMethod", "text",
+    "conf.__widget__.resampleingMethod", "text",
     "conf.__widget__.particles_count", "text",
     "conf.__widget__.occupancyGrid_count", "text",
     "conf.__widget__.mapAltitude", "text",
-    "conf.__widget__.useMapAltitude", "text",
+    "conf.__widget__.useMapaltitude", "text",
     "conf.__widget__.maxDistanceInsertion", "text",
     "conf.__widget__.maxOccupancyUpdateCertainty", "text",
-    "conf.__widget__.considerInvalidRangesAsFreeSpace", "text",
+    "conf.__widget__.consiiderInvalidRangesAsFreeSpace", "text",
     "conf.__widget__.decimation", "text",
-    "conf.__widget__.horizontalTolerance", "text",
+    "conf.__widget__.hrizontalTolerance", "text",
     "conf.__widget__.CFD_features_gaussian_size", "text",
     "conf.__widget__.CFD_features_median_size", "text",
     "conf.__widget__.wideningBeamsWithDistance", "text",
@@ -127,7 +126,7 @@ static const char* localization_mrpt_spec[] =
     "conf.__widget__.LF_maxRange", "text",
     "conf.__widget__.LF_alternateAverageMethod", "text",
     "conf.__widget__.MI_exponent", "text",
-    "conf.__widget__.MI_skip_rays", "text",
+    "conf.__widget__.MI_skip_rasys", "text",
     "conf.__widget__.MI_ratio_max_distance", "text",
     "conf.__widget__.rayTracing_useDistanceFilter", "text",
     "conf.__widget__.rayTracing_decimation", "text",
@@ -159,16 +158,16 @@ static const char* localization_mrpt_spec[] =
     "conf.__type__.sampleSize", "int",
     "conf.__type__.poseTimeOut", "float",
     "conf.__type__.PF_algorithm", "string",
-    "conf.__type__.resamplingMethod", "int",
+    "conf.__type__.resampleingMethod", "int",
     "conf.__type__.particles_count", "int",
     "conf.__type__.occupancyGrid_count", "int",
     "conf.__type__.mapAltitude", "int",
-    "conf.__type__.useMapAltitude", "int",
+    "conf.__type__.useMapaltitude", "int",
     "conf.__type__.maxDistanceInsertion", "int",
     "conf.__type__.maxOccupancyUpdateCertainty", "double",
-    "conf.__type__.considerInvalidRangesAsFreeSpace", "int",
+    "conf.__type__.consiiderInvalidRangesAsFreeSpace", "int",
     "conf.__type__.decimation", "int",
-    "conf.__type__.horizontalTolerance", "double",
+    "conf.__type__.hrizontalTolerance", "double",
     "conf.__type__.CFD_features_gaussian_size", "double",
     "conf.__type__.CFD_features_median_size", "double",
     "conf.__type__.wideningBeamsWithDistance", "int",
@@ -182,7 +181,7 @@ static const char* localization_mrpt_spec[] =
     "conf.__type__.LF_maxRange", "double",
     "conf.__type__.LF_alternateAverageMethod", "int",
     "conf.__type__.MI_exponent", "int",
-    "conf.__type__.MI_skip_rays", "int",
+    "conf.__type__.MI_skip_rasys", "int",
     "conf.__type__.MI_ratio_max_distance", "int",
     "conf.__type__.rayTracing_useDistanceFilter", "int",
     "conf.__type__.rayTracing_decimation", "int",
@@ -194,14 +193,11 @@ static const char* localization_mrpt_spec[] =
   };
 // </rtc-template>
 
-ssr::Pose2D OldPose;
-ssr::MCLocalization_MRPT mcl;
-
 /*!
  * @brief constructor
  * @param manager Maneger Object
  */
-Localization_MRPT::Localization_MRPT(RTC::Manager* manager)
+Localization_MRPTTest::Localization_MRPTTest(RTC::Manager* manager)
     // <rtc-template block="initializer">
   : RTC::DataFlowComponentBase(manager),
     m_rangeIn("range", m_range),
@@ -216,27 +212,27 @@ Localization_MRPT::Localization_MRPT(RTC::Manager* manager)
 /*!
  * @brief destructor
  */
-Localization_MRPT::~Localization_MRPT()
+Localization_MRPTTest::~Localization_MRPTTest()
 {
 }
 
 
 
-RTC::ReturnCode_t Localization_MRPT::onInitialize()
+RTC::ReturnCode_t Localization_MRPTTest::onInitialize()
 {
   // Registration: InPort/OutPort/Service
   // <rtc-template block="registration">
   // Set InPort buffers
-  addInPort("range", m_rangeIn);
-  addInPort("odometry", m_odometryIn);
+  addInPort("estimatedPose", m_estimatedPoseIn);
   
   // Set OutPort buffer
-  addOutPort("estimatedPose", m_estimatedPoseOut);
+  addOutPort("range", m_rangeOut);
+  addOutPort("odometry", m_odometryOut);
   
   // Set service provider to Ports
+  m_mapServerPort.registerProvider("OGMapServer", "RTC::OGMapServer", m_mapServer);
   
   // Set service consumers to Ports
-  m_mapServerPort.registerConsumer("OGMapServer", "RTC::OGMapServer", m_mapServer);
   
   // Set CORBA Service Ports
   addPort(m_mapServerPort);
@@ -268,16 +264,16 @@ RTC::ReturnCode_t Localization_MRPT::onInitialize()
   bindParameter("sampleSize", m_sampleSize, "1");
   bindParameter("poseTimeOut", m_poseTimeOut, "3.0");
   bindParameter("PF_algorithm", m_PF_algorithm, "pfSatndardProposal");
-  bindParameter("resamplingMethod", m_resamplingMethod, "prMultinomials");
+  bindParameter("resampleingMethod", m_resampleingMethod, "prMultinomials");
   bindParameter("particles_count", m_particles_count, "1000");
   bindParameter("occupancyGrid_count", m_occupancyGrid_count, "1");
   bindParameter("mapAltitude", m_mapAltitude, "0");
-  bindParameter("useMapAltitude", m_useMapAltitude, "1");
+  bindParameter("useMapaltitude", m_useMapaltitude, "1");
   bindParameter("maxDistanceInsertion", m_maxDistanceInsertion, "15");
   bindParameter("maxOccupancyUpdateCertainty", m_maxOccupancyUpdateCertainty, "0.55");
-  bindParameter("considerInvalidRangesAsFreeSpace", m_considerInvalidRangesAsFreeSpace, "1");
+  bindParameter("consiiderInvalidRangesAsFreeSpace", m_consiiderInvalidRangesAsFreeSpace, "1");
   bindParameter("decimation", m_decimation, "1");
-  bindParameter("horizontalTolerance", m_horizontalTolerance, "0.000873");
+  bindParameter("hrizontalTolerance", m_hrizontalTolerance, "0.000873");
   bindParameter("CFD_features_gaussian_size", m_CFD_features_gaussian_size, "1.0");
   bindParameter("CFD_features_median_size", m_CFD_features_median_size, "3.0");
   bindParameter("wideningBeamsWithDistance", m_wideningBeamsWithDistance, "0");
@@ -291,7 +287,7 @@ RTC::ReturnCode_t Localization_MRPT::onInitialize()
   bindParameter("LF_maxRange", m_LF_maxRange, "80");
   bindParameter("LF_alternateAverageMethod", m_LF_alternateAverageMethod, "0");
   bindParameter("MI_exponent", m_MI_exponent, "10");
-  bindParameter("MI_skip_rays", m_MI_skip_rays, "10");
+  bindParameter("MI_skip_rasys", m_MI_skip_rasys, "10");
   bindParameter("MI_ratio_max_distance", m_MI_ratio_max_distance, "2");
   bindParameter("rayTracing_useDistanceFilter", m_rayTracing_useDistanceFilter, "0");
   bindParameter("rayTracing_decimation", m_rayTracing_decimation, "10");
@@ -304,231 +300,74 @@ RTC::ReturnCode_t Localization_MRPT::onInitialize()
 }
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onFinalize()
+RTC::ReturnCode_t Localization_MRPTTest::onFinalize()
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onStartup(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onStartup(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onShutdown(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onShutdown(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 
-RTC::ReturnCode_t Localization_MRPT::onActivated(RTC::UniqueId ec_id)
-{
-  m_MODE = MODE_NORMAL;  
-  m_lastReceivedTime = coil::gettimeofday();
-
-  //Load OGMap
-  RTC::OGMap* ogmap = new RTC::OGMap();
-  while (m_mapServerPort.get_connector_profiles()->length() == 0) {
-	  coil::sleep(1);
-	  std::cout << "[RTC::Localization_MRPT] Waiting for Map Server Connection" << std::endl;
-  }
-
-  RTC::ConnectorProfileList& pList = *(m_mapServerPort.get_connector_profiles());
-  RTC::RTObjectRef rto = (RTC::RTObjectRef)pList[0].ports[0]->get_port_profile()->owner;
-  if(std::string((const char*)rto->get_component_profile()->instance_name) == this->getInstanceName()) {
-    rto = (RTC::RTObjectRef)pList[0].ports[1]->get_port_profile()->owner;
-  }
-  do {
-	  coil::sleep(1);
-	  std::cout << "[RTC::Localization_MRPT] Waiting for Map Server Activation" << std::endl;
-	  if((*(rto->get_owned_contexts()))[0]->get_component_state(rto) == RTC::ERROR_STATE) {
-		  std::cout << "[RTC::Localization_MRPT] Map Server RTC is now in ERROR_STATE" << std::endl;
-		  return RTC::RTC_ERROR;
-	  }
-  } while ((*(rto->get_owned_contexts()))[0]->get_component_state(rto) != RTC::ACTIVE_STATE);
-
-  RTC::RETURN_VALUE ret = m_mapServer->requestCurrentBuiltMap(ogmap); 
-
-  if (ret != RTC::RETVAL_OK) {
-	  std::cout << "[RTC::Localization_MRPT] Acquiring Map from Server Failed." << std::endl;
-  }
-
-  std::cout << "[RTC::Localization_MRPT] Initializing Monte Carlo Localization." << std::endl;
-
-  mcl.setMap(*ogmap);
-  
-  mcl.m_PF_algorithm = mrpt::bayes::CParticleFilter::TParticleFilterAlgorithm(m_PF_algorithm);
-  mcl.m_resamplingMethod =  mrpt::bayes::CParticleFilter::TParticleResamplingAlgorithm(m_resamplingMethod);
-  mcl.m_min_x = m_min_x;
-  mcl.m_max_x = m_max_x;
-  mcl.m_min_y = m_min_y;
-  mcl.m_max_y = m_max_y;
-  mcl.m_min_phi = m_min_phi;
-  mcl.m_max_phi = m_max_phi;
-  mcl.m_range_min = m_range_min;
-  mcl.m_range_max = m_range_max;
-  mcl.m_particles_count = m_particles_count;
-
-  mcl.m_minStdXY = m_minStdXY;
-  mcl.m_minStdPHI = m_minStdPHI;
-  mcl.m_KLD_binSize_PHI = m_KLD_binSize_PHI;
-  mcl.m_KLD_binSize_XY = m_KLD_binSize_XY;
-  mcl.m_KLD_delta = m_KLD_delta;
-  mcl.m_KLD_epsilon = m_KLD_epsilon;
-  mcl.m_KLD_maxSampleSize = m_KLD_maxSampleSize;
-  mcl.m_KLD_minSampleSize = m_KLD_minSampleSize;
-  mcl.m_KLD_minSamplesPerBin = m_KLD_minSamplesPerBin;
-  mcl.m_adaptiveSampleSize = m_adaptiveSampleSize;
-  mcl.m_pfAuxFilterOptimal_MaximumSearchSamples = m_pfAuxFilterOptimal_MaximumSearchSamples;
-  mcl.m_BETA = m_BETA;
-  mcl.m_sampleSize = m_sampleSize;
-  
-  mcl.m_mapAltitude = m_mapAltitude;
-  mcl.m_useMapAltitude = m_useMapAltitude;
-  mcl.m_maxDistanceInsertion = m_maxDistanceInsertion;
-  mcl.m_maxOccupancyUpdateCertainty = m_maxOccupancyUpdateCertainty;
-  mcl.m_considerInvalidRangesAsFreeSpace = m_considerInvalidRangesAsFreeSpace;
-  mcl.m_decimation = m_decimation;
-  mcl.m_horizontalTolerance =  m_horizontalTolerance; 
-  mcl.m_CFD_features_gaussian_size = m_CFD_features_gaussian_size;
-  mcl.m_CFD_features_median_size = m_CFD_features_median_size;
-  mcl.m_wideningBeamsWithDistance = m_wideningBeamsWithDistance;
-
-  mcl.m_likelihoodMethod = mrpt::maps::COccupancyGridMap2D::TLikelihoodMethod(m_likelihoodMethod);
-  mcl.m_enableLikelihoodCache = m_enableLikelihoodCache;
-  mcl.m_LF_decimation= m_LF_decimation;
-  mcl.m_LF_stdHit= m_LF_stdHit;
-  mcl.m_LF_maxCorrsDistance=  m_LF_maxCorrsDistance;
-  mcl.m_LF_zHit= m_LF_zHit; 
-  mcl.m_LF_zRandom=  m_LF_zRandom; 
-  mcl.m_LF_maxRange=  m_LF_maxRange;
-  mcl.m_LF_alternateAverageMethod= m_LF_alternateAverageMethod;
-  mcl.m_MI_exponent= m_MI_exponent;
-  mcl.m_MI_skip_rays= m_MI_skip_rays;
-  mcl.m_MI_ratio_max_distance= m_MI_ratio_max_distance;		
-  mcl.m_rayTracing_useDistanceFilter= m_rayTracing_useDistanceFilter;
-  mcl.m_rayTracing_decimation= m_rayTracing_decimation;
-  mcl.m_rayTracing_stdHit= m_rayTracing_stdHit;
-  mcl.m_consensus_takeEachRange= m_consensus_takeEachRange;
-  mcl.m_consensus_pow= m_consensus_pow;
-
-
-  mcl.initialize();
-
-  OldPose.x = 0;
-  OldPose.y = 0;
-  OldPose.th = 0;
-
-  m_odomUpdated = m_rangeUpdated = false;
-  std::cout << "[RTC::Localization_MRPT] Successfully Activated." << std::endl;
-
-  return RTC::RTC_OK;
-}
-
-
-RTC::ReturnCode_t Localization_MRPT::onDeactivated(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onActivated(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 
 
-RTC::ReturnCode_t Localization_MRPT::onExecute(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onDeactivated(RTC::UniqueId ec_id)
 {
-  coil::TimeValue currentTime = coil::gettimeofday();
+  return RTC::RTC_OK;
+}
 
-  if(m_odometryIn.isNew()){
-	  m_odometryIn.read();
-	  ssr::Pose2D CurrentPose(m_odometry.data.position.x, m_odometry.data.position.y, m_odometry.data.heading);
 
-	  //std::cerr << ">>> " << m_odometry.data.position.x << ", " << m_odometry.data.position.y << ", " <<m_odometry.data.heading << std::endl;
-
-	  ssr::Pose2D deltaPose = CurrentPose - OldPose;
-	  if(deltaPose.x < -5 || deltaPose.x > 5){// the number should be add configuration
-		m_MODE = MODE_POSE_INVALID_VALUE;
-		m_estimatedPoseOut.disconnect("estimatedPose");
-	  }else if(deltaPose.y < -5 || deltaPose.y > 5){
-		m_MODE = MODE_POSE_INVALID_VALUE;
-		m_estimatedPoseOut.disconnect("estimatedPose");
-	  }
-	  OldPose = CurrentPose;
-	  mcl.addPose(deltaPose);
-	  m_odomUpdated = true;
-	  	  
-	  m_lastReceivedTime = currentTime;
-  }else {
-	  //mcl.addPose(ssr::Pose2D());
-	  //m_odomUpdated = true;
-
-	  double duration = currentTime - m_lastReceivedTime;
-	  if (duration > m_poseTimeOut && m_poseTimeOut > 0) {
-		m_MODE = MODE_POSE_TIME_OUT;
-		m_estimatedPoseOut.disconnect("estimatedPose");
-	  }
-
-  }
-
-  if(m_rangeIn.isNew()){
-	  m_rangeIn.read();
-	  ssr::Range range(&(m_range.ranges[0]), 
-			m_range.ranges.length(), 
-			m_range.config.maxAngle - m_range.config.minAngle);
-	  //std::cerr << "-- (" << m_range.config.maxAngle - m_range.config.minAngle << ")" << std::endl;
-	  mcl.addRange(range);
-	  m_rangeUpdated = true;
-  }
-
-  if(m_rangeUpdated && m_odomUpdated) {
- 	mrpt::poses::CPose2D estPose;
-	estPose = mcl.getEstimatedPose();
-	m_estimatedPose.data.position.x = estPose.x();
-	m_estimatedPose.data.position.y = estPose.y();
-	m_estimatedPose.data.heading    = estPose.phi();
-	setTimestamp<RTC::TimedPose2D>(m_estimatedPose);
-
-	//std::cerr << "[[est:" << estPose.x() << ", " << estPose.y() << ", " << estPose.phi() <<std::endl;
-
-	m_estimatedPoseOut.write();
-
-	m_rangeUpdated = false;
-	m_odomUpdated = false;
-  }
+RTC::ReturnCode_t Localization_MRPTTest::onExecute(RTC::UniqueId ec_id)
+{
   return RTC::RTC_OK;
 }
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onAborting(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onAborting(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onError(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onError(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onReset(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onReset(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onStateUpdate(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onStateUpdate(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
 */
 
 /*
-RTC::ReturnCode_t Localization_MRPT::onRateChanged(RTC::UniqueId ec_id)
+RTC::ReturnCode_t Localization_MRPTTest::onRateChanged(RTC::UniqueId ec_id)
 {
   return RTC::RTC_OK;
 }
@@ -539,12 +378,12 @@ RTC::ReturnCode_t Localization_MRPT::onRateChanged(RTC::UniqueId ec_id)
 extern "C"
 {
  
-  void Localization_MRPTInit(RTC::Manager* manager)
+  void Localization_MRPTTestInit(RTC::Manager* manager)
   {
     coil::Properties profile(localization_mrpt_spec);
     manager->registerFactory(profile,
-                             RTC::Create<Localization_MRPT>,
-                             RTC::Delete<Localization_MRPT>);
+                             RTC::Create<Localization_MRPTTest>,
+                             RTC::Delete<Localization_MRPTTest>);
   }
   
 };

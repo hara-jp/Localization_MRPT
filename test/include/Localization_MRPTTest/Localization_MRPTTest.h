@@ -1,14 +1,14 @@
 ﻿// -*- C++ -*-
 /*!
- * @file  Localization_MRPT.h
+ * @file  Localization_MRPTTest.h
  * @brief Localization MRPT Component
  * @date  $Date$
  *
  * $Id$
  */
 
-#ifndef LOCALIZATION_MRPT_H
-#define LOCALIZATION_MRPT_H
+#ifndef LOCALIZATION_MRPT_TEST__H
+#define LOCALIZATION_MRPT_TEST_H
 
 #include <rtm/idl/BasicDataTypeSkel.h>
 #include <rtm/idl/ExtendedDataTypesSkel.h>
@@ -16,17 +16,20 @@
 
 // Service implementation headers
 // <rtc-template block="service_impl_h">
+#include "MobileRobotSVC_impl.h"
+#include "InterfaceDataTypesSVC_impl.h"
+#include "ExtendedDataTypesSVC_impl.h"
 
 // </rtc-template>
 
 // Service Consumer stub headers
 // <rtc-template block="consumer_stub_h">
-#include "MobileRobotStub.h"
-#include "InterfaceDataTypesStub.h"
-#include "ExtendedDataTypesStub.h"
 
 // </rtc-template>
-#include "MobileRobotStub.h"
+
+// Service Consumer stub headers
+// <rtc-template block="port_stub_h">
+// </rtc-template>
 
 #include <rtm/Manager.h>
 #include <rtm/DataFlowComponentBase.h>
@@ -35,11 +38,11 @@
 #include <rtm/DataOutPort.h>
 
 /*!
- * @class Localization_MRPT
+ * @class Localization_MRPTTest
  * @brief Localization MRPT Component
  *
  */
-class Localization_MRPT
+class Localization_MRPTTest
   : public RTC::DataFlowComponentBase
 {
  public:
@@ -47,12 +50,12 @@ class Localization_MRPT
    * @brief constructor
    * @param manager Maneger Object
    */
-  Localization_MRPT(RTC::Manager* manager);
+  Localization_MRPTTest(RTC::Manager* manager);
 
   /*!
    * @brief destructor
    */
-  ~Localization_MRPT();
+  ~Localization_MRPTTest();
 
   // <rtc-template block="public_attribute">
   
@@ -65,6 +68,7 @@ class Localization_MRPT
   /***
    *
    * The initialize action (on CREATED->ALIVE transition)
+   * formaer rtc_init_entry() 
    *
    * @return RTC::ReturnCode_t
    * 
@@ -75,6 +79,7 @@ class Localization_MRPT
   /***
    *
    * The finalize action (on ALIVE->END transition)
+   * formaer rtc_exiting_entry()
    *
    * @return RTC::ReturnCode_t
    * 
@@ -85,6 +90,7 @@ class Localization_MRPT
   /***
    *
    * The startup action when ExecutionContext startup
+   * former rtc_starting_entry()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -97,6 +103,7 @@ class Localization_MRPT
   /***
    *
    * The shutdown action when ExecutionContext stop
+   * former rtc_stopping_entry()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -109,6 +116,7 @@ class Localization_MRPT
   /***
    *
    * The activated action (Active state entry action)
+   * former rtc_active_entry()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -121,6 +129,7 @@ class Localization_MRPT
   /***
    *
    * The deactivated action (Active state exit action)
+   * former rtc_active_exit()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -133,6 +142,7 @@ class Localization_MRPT
   /***
    *
    * The execution action that is invoked periodically
+   * former rtc_active_do()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -145,6 +155,7 @@ class Localization_MRPT
   /***
    *
    * The aborting action when main logic error occurred.
+   * former rtc_aborting_entry()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -157,6 +168,7 @@ class Localization_MRPT
   /***
    *
    * The error action in ERROR state
+   * former rtc_error_do()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -169,6 +181,7 @@ class Localization_MRPT
   /***
    *
    * The reset action that is invoked resetting
+   * This is same but different the former rtc_init_entry()
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -181,6 +194,7 @@ class Localization_MRPT
   /***
    *
    * The state update action that is invoked after onExecute() action
+   * no corresponding operation exists in OpenRTm-aist-0.2.0
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -193,6 +207,7 @@ class Localization_MRPT
   /***
    *
    * The action that is invoked when execution context's rate is changed
+   * no corresponding operation exists in OpenRTm-aist-0.2.0
    *
    * @param ec_id target ExecutionContext Id
    *
@@ -351,13 +366,13 @@ class Localization_MRPT
    * - Name:  PF_algorithm
    * - DefaultValue: pfSatndardProposal
    */
-  int m_PF_algorithm;
+  std::string m_PF_algorithm;
   /*!
    * 
-   * - Name:  resamplingMethod
+   * - Name:  resampleingMethod
    * - DefaultValue: prMultinomials
    */
-  int m_resamplingMethod;
+  int m_resampleingMethod;
   /*!
    * 
    * - Name:  particles_count
@@ -378,10 +393,10 @@ class Localization_MRPT
   int m_mapAltitude;
   /*!
    * 
-   * - Name:  useMapAltitude
+   * - Name:  useMapaltitude
    * - DefaultValue: 1
    */
-  int m_useMapAltitude;
+  int m_useMapaltitude;
   /*!
    * 
    * - Name:  maxDistanceInsertion
@@ -396,10 +411,10 @@ class Localization_MRPT
   double m_maxOccupancyUpdateCertainty;
   /*!
    * 
-   * - Name:  considerInvalidRangesAsFreeSpace
+   * - Name:  consiiderInvalidRangesAsFreeSpace
    * - DefaultValue: 1
    */
-  int m_considerInvalidRangesAsFreeSpace;
+  int m_consiiderInvalidRangesAsFreeSpace;
   /*!
    * 
    * - Name:  decimation
@@ -408,10 +423,10 @@ class Localization_MRPT
   int m_decimation;
   /*!
    * 
-   * - Name:  horizontalTolerance
+   * - Name:  hrizontalTolerance
    * - DefaultValue: 0.000873
    */
-  double m_horizontalTolerance;
+  double m_hrizontalTolerance;
   /*!
    * 
    * - Name:  CFD_features_gaussian_size
@@ -492,10 +507,10 @@ class Localization_MRPT
   int m_MI_exponent;
   /*!
    * 
-   * - Name:  MI_skip_rays
+   * - Name:  MI_skip_rasys
    * - DefaultValue: 10
    */
-  int m_MI_skip_rays;
+  int m_MI_skip_rasys;
   /*!
    * 
    * - Name:  MI_ratio_max_distance
@@ -537,24 +552,24 @@ class Localization_MRPT
 
   // DataInPort declaration
   // <rtc-template block="inport_declare">
-  RTC::RangeData m_range;
+  RTC::TimedPose2D m_estimatedPose;
   /*!
    */
-  RTC::InPort<RTC::RangeData> m_rangeIn;
-  RTC::TimedPose2D m_odometry;
-  /*!
-   */
-  RTC::InPort<RTC::TimedPose2D> m_odometryIn;
+  RTC::InPort<RTC::TimedPose2D> m_estimatedPoseIn;
   
   // </rtc-template>
 
 
   // DataOutPort declaration
   // <rtc-template block="outport_declare">
-  RTC::TimedPose2D m_estimatedPose;
+  RTC::RangeData m_range;
   /*!
    */
-  RTC::OutPort<RTC::TimedPose2D> m_estimatedPoseOut;
+  RTC::OutPort<RTC::RangeData> m_rangeOut;
+  RTC::TimedPose2D m_odometry;
+  /*!
+   */
+  RTC::OutPort<RTC::TimedPose2D> m_odometryOut;
   
   // </rtc-template>
 
@@ -568,14 +583,14 @@ class Localization_MRPT
 
   // Service declaration
   // <rtc-template block="service_declare">
+  /*!
+   */
+  OGMapServerSVC_impl m_mapServer;
   
   // </rtc-template>
 
   // Consumer declaration
   // <rtc-template block="consumer_declare">
-  /*!
-   */
-  RTC::CorbaConsumer<RTC::OGMapServer> m_mapServer;
   
   // </rtc-template>
 
@@ -588,24 +603,12 @@ class Localization_MRPT
   
   // </rtc-template>
 
-	 bool m_odomUpdated, m_rangeUpdated;
-
-	 
-	 coil::TimeValue m_lastReceivedTime;
-
-	 enum LOCALIZATION_MODE{
-		 MODE_NORMAL,
-		 MODE_POSE_INVALID_VALUE,
-		 MODE_POSE_TIME_OUT
-	 };
-	 LOCALIZATION_MODE m_MODE;
-	 LOCALIZATION_MODE getMode(){return m_MODE;}
 };
 
 
 extern "C"
 {
-  DLL_EXPORT void Localization_MRPTInit(RTC::Manager* manager);
+  DLL_EXPORT void Localization_MRPTTestInit(RTC::Manager* manager);
 };
 
-#endif // LOCALIZATION_MRPT_H
+#endif // LOCALIZATION_MRPT_TEST_H

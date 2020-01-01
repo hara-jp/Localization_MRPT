@@ -1,6 +1,6 @@
 ﻿// -*- C++ -*-
 /*!
- * @file Localization_MRPTComp.cpp
+ * @file Localization_MRPTTestComp.cpp
  * @brief Standalone component
  * @date $Date$
  *
@@ -11,16 +11,16 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
-#include "Localization_MRPT.h"
+#include "Localization_MRPTTest.h"
 
 
 void MyModuleInit(RTC::Manager* manager)
 {
-  Localization_MRPTInit(manager);
+  Localization_MRPTTestInit(manager);
   RTC::RtcBase* comp;
 
   // Create a component
-  comp = manager->createComponent("Localization_MRPT");
+  comp = manager->createComponent("Localization_MRPTTest");
 
   if (comp==NULL)
   {
@@ -75,6 +75,9 @@ int main (int argc, char** argv)
 {
   RTC::Manager* manager;
   manager = RTC::Manager::init(argc, argv);
+
+  // Initialize manager
+  manager->init(argc, argv);
 
   // Set module initialization proceduer
   // This procedure will be invoked in activateManager() function.

@@ -72,18 +72,23 @@ void  MCLocalization_MRPT::initialize(){
 
 	///
 	motion_model_options_.modelSelection = mrpt::obs::CActionRobotMovement2D::mmGaussian;
-	motion_model_options_.gausianModel.minStdXY  = m_minStdXY;
-	motion_model_options_.gausianModel.minStdPHI = m_minStdPHI;
+	motion_model_options_.gaussianModel.minStdXY  = m_minStdXY;
+	motion_model_options_.gaussianModel.minStdPHI = m_minStdPHI;
 
 	//pdf_.resetUniformFreeSpace(&m_map, 0.7f, m_particles_count, m_min_x, m_max_x, m_min_y, m_max_y);//, m_min_phi, m_max_phi);
+	/*
 	pdf_.resetUniform(m_map.getXMin(), m_map.getXMax(),
 			  m_map.getYMin(), m_map.getYMax(),
 			  -M_PI, M_PI, m_particles_count);//, m_min_phi, m_max_phi);
+			  */
+	pdf_.resetUniform(m_min_x, m_max_x,
+			  m_min_y, m_max_y,
+			  m_min_phi, m_max_phi, m_particles_count);//, m_min_phi, m_max_phi);
 }
 
 bool MCLocalization_MRPT::addPose(const ssr::Pose2D& deltaPose)
 {
-        mrpt::obs::CActionRobotMovement2D action;
+	mrpt::obs::CActionRobotMovement2D action;
 	mrpt::obs::CActionRobotMovement2D::TMotionModelOptions options;
 	action.computeFromOdometry(mrpt::poses::CPose2D(deltaPose.x, deltaPose.y, deltaPose.th), motion_model_options_);
 	action.timestamp = mrpt::system::getCurrentTime();
@@ -91,6 +96,7 @@ bool MCLocalization_MRPT::addPose(const ssr::Pose2D& deltaPose)
 	if(action.timestamp == oldTimestamp) {
 		action.timestamp = oldTimestamp +1;
 	}
+        //std::cerr << "[[[[ " << deltaPose.x << ", " << deltaPose.y << std::endl;
 	oldTimestamp = action.timestamp;
 	m_ActionCollection.clear();
 	m_ActionCollection.insert(action);
@@ -101,26 +107,45 @@ bool MCLocalization_MRPT::addRange(const ssr::Range& range)
 {
   mrpt::obs::CObservation2DRangeScanPtr observation = mrpt::obs::CObservation2DRangeScan::Create();
 	observation->rightToLeft = true;
-	observation->validRange.resize(range.size);
-	observation->scan.resize(range.size);
+	observation->resizeScan(range.size);
+
 	observation->aperture = range.aperture;
+	observation->maxRange = m_range_max;
 	observation->timestamp = mrpt::system::getCurrentTime();
-	for(int i = 0;i < range.size; i++) {
-		observation->scan[i] = range.range[i];
-		if(observation->scan[i] > m_range_min && observation->scan[i] < m_range_max) {
-			observation->validRange[i] = 1;
+/*
+	double angle_step = range.aperture / (range.size -1);
+	double fov05 = range.aperture * 0.5;
+	double inv_angle_step = (range.size -1 ) / range.aperture;
+*/
+	for(int i=0;i < range.size; i++) {
+/*
+ 		int i_rtm = inv_angle_step * ( -fov05 + 3.141593 + angle_step * i); 
+		if (i_rtm < 0) i_rtm += range.size;
+		else if (i_rtm >= (int)range.size) i_rtm -= range.size;
+*/
+                const float r = (float)range.range[i];
+
+		//observation->setScanRange(i, (float)range.range[i]);
+		observation->setScanRange(i, r);
+
+		if( observation->scan[i] > m_range_min 
+			&& observation->scan[i] < (m_range_max * 0.95)) 
+		{
+			observation->setScanRangeValidity(i, (bool)1);
 		} else {
-			observation->validRange[i] = 0;
-		}
+			observation->setScanRangeValidity(i, (bool)0);
+		}		
+
 	}
-	observation->setSensorPose(m_RangeSensorPose);
+	//observation->setSensorPose(m_RangeSensorPose);
+	observation->sensorPose = m_RangeSensorPose;
 	m_SensoryFrame.clear();
 	m_SensoryFrame.insert(observation);
 	return true;
 }
 
 mrpt::poses::CPose2D MCLocalization_MRPT::getEstimatedPose(){
-    pf_.executeOn(pdf_,& m_ActionCollection,& m_SensoryFrame, &pf_stats_);
+	pf_.executeOn(pdf_,& m_ActionCollection,& m_SensoryFrame, &pf_stats_);
 	return pdf_.getMeanVal();
 }
 
@@ -131,6 +156,9 @@ void MCLocalization_MRPT::OGMap2COccupancyGridMap(RTC::OGMap ogmap, mrpt::maps::
 		-(ogmap.map.height * ogmap.config.yScale + ogmap.config.origin.position.y),
 		-ogmap.config.origin.position.y,
 		ogmap.config.xScale);
+
+	std::cerr << "MAP:" << -ogmap.config.origin.position.x << ", " << (ogmap.map.width * ogmap.config.xScale - ogmap.config.origin.position.x) << ", " << -(ogmap.map.height * ogmap.config.yScale + ogmap.config.origin.position.y) << ", " << -ogmap.config.origin.position.y << ", " << ogmap.config.xScale << std::endl;
+
 	//gridmap->setSize(0-ogmap.map.width*ogmap.config.xScale/2, ogmap.map.width*ogmap.config.xScale/2, 0-ogmap.map.width*ogmap.config.yScale/2, ogmap.map.height*ogmap.config.yScale/2, ogmap.config.xScale);
 	int height = gridmap->getSizeY();
 	int width =  gridmap->getSizeX();
@@ -138,14 +166,16 @@ void MCLocalization_MRPT::OGMap2COccupancyGridMap(RTC::OGMap ogmap, mrpt::maps::
 	for(int i=0; i <height ; i++){
 		for(int j=0; j <width ; j++){
 			int cell = ogmap.map.cells[(height-i-1) * width + j];
+			//int cell = ogmap.map.cells[i * width + j];
 	
 			if(cell < 100){
 				gridmap->setCell(j, i, 0.0);
 			}else if(cell > 200){
 				gridmap->setCell(j, i, 1.0);
 			}else{
-				//gridmap->setCell(j, i, 0.5);未知領域をグレーに
-				gridmap->setCell(j, i, 1.0);//未知領域を白に
+				//gridmap->setCell(j, i, 0.0);
+				//gridmap->setCell(j, i, 0.5);
+				gridmap->setCell(j, i, 1.0);
 			}
 		}
 	}
